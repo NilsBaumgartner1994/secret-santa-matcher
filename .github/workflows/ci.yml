@@ -25,8 +25,8 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       - name: "👤 Git User Configuration"
         run: |
-          git config --global user.name 'Rocket Meals'
-          git config --global user.email 'nils@baumgartner-software.de'
+          git config --global user.name 'Nils Baumgartner'
+          git config --global user.email 'nilsbaumgartner1994@gmail.com'
       - name: "🚀 Deploy to GitHub Pages"
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
