@@ -1,0 +1,36 @@
+name: "🚀 CI"
+
+on:
+  push:
+    branches: [main, master, dev]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-gh-pages:
+    name: "🌍 Deploy to GitHub Pages"
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'master' || github.ref_name == 'main'
+    steps:
+      - name: "🔄 Checkout Repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: "🧰 Setup Node.js, Yarn & Dependencies"
+        uses: ./.github/actions/setup-and-install
+        with:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      - name: "👤 Git User Configuration"
+        run: |
+          git config --global user.name 'Nils Baumgartner'
+          git config --global user.email 'nilsbaumgartner1994@gmail.com'
+      - name: "🚀 Deploy to GitHub Pages"
+        run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          CI=false yarn deploy:gh:pages
+        working-directory: ./apps/frontend/app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
