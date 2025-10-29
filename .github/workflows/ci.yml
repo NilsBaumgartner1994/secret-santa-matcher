@@ -13,7 +13,7 @@ jobs:
   deploy-gh-pages:
     name: "🌍 Deploy to GitHub Pages"
     runs-on: ubuntu-latest
-    if: github.ref_name == 'master'
+    if: github.ref_name == 'master' || github.ref_name == 'main'
     steps:
       - name: "🔄 Checkout Repository"
         uses: actions/checkout@v4
