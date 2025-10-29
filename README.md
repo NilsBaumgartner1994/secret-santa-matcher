@@ -1,24 +1,29 @@
 # Secret Santa Matcher
 
-A tool to help organize Secret Santa gift exchanges by randomly matching participants while respecting any exclusion rules.
-
-## Description
-
-This project helps you create fair and random Secret Santa pairings for your group. It ensures that:
-- Everyone gets assigned someone to give a gift to
-- No one is matched with themselves
-- Optional exclusion rules can be defined (e.g., spouses don't get matched together)
+Ein Expo-Projekt, mit dem du dein Wichteln organisieren kannst. Die Web-Version lässt sich mit GitHub Actions automatisch auf GitHub Pages ausrollen.
 
 ## Features
 
-- Random pairing generation
-- Support for exclusion rules
-- Fair and balanced matching algorithm
+- Schritt-für-Schritt-Flow: Landing Page, Teilnehmer:innen erfassen, Zuordnungen aufdecken
+- Ausschlussregeln je Person (Selbst, Partner:in sowie optionale weitere Namen)
+- Automatisch generierte Reveal-Links unter `https://nilsbaumgartner1994.github.io/secret-santa-matcher/reveal/<hash>`
+- Deployment-Workflow für GitHub Pages (`main`-Branch)
 
-## Getting Started
+## Entwicklung
 
-More information coming soon!
+```bash
+npm install
+npm run web
+```
 
-## License
+Die App startet anschließend im Browser unter `http://localhost:8081`.
 
-This project is open source and available under standard licensing terms.
+## Produktion / GitHub Pages
+
+Der Workflow `.github/workflows/deploy.yml` erstellt bei jedem Push auf `main` ein statisches Web-Bundle und veröffentlicht es auf GitHub Pages. Lokal kannst du denselben Schritt mit
+
+```bash
+npm run build:web
+```
+
+ausführen. Das Ergebnis landet im Verzeichnis `dist/`.
