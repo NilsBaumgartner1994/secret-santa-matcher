@@ -16,7 +16,7 @@ import {useTheme} from '@/hooks/useTheme';
 import {DrawerContentComponentProps, DrawerNavigationProp} from '@react-navigation/drawer';
 import {isWeb} from '@/constants/Constants';
 import {useNavigation} from 'expo-router';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {Ionicons} from '@expo/vector-icons';
 import {useLanguage} from '@/hooks/useLanguage';
 import {Tooltip, TooltipContent, TooltipText} from '@gluestack-ui/themed';
@@ -26,13 +26,12 @@ import {RootState} from '@/redux/reducer';
 import {RootDrawerParamList} from "@/app/(app)/match/types";
 
 
-const Index: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
-	const dispatch = useDispatch();
+const Index: React.FC<DrawerContentComponentProps> = (_props) => {
 	const { theme } = useTheme();
 	const { translate } = useLanguage();
 	const drawerNavigation = useNavigation<DrawerNavigationProp<RootDrawerParamList>>();
 	const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
-	const { sortBy, language: languageCode, drawerPosition, appSettings, primaryColor, selectedTheme: mode } = useSelector((state: RootState) => state.settings);
+	const { drawerPosition, primaryColor } = useSelector((state: RootState) => ({ drawerPosition: state.settings.drawerPosition, primaryColor: state.settings.primaryColor }));
 	const foods_area_color = primaryColor;
 	const [refreshing, setRefreshing] = useState(false);
 
