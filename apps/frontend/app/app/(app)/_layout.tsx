@@ -39,38 +39,21 @@ export default function Layout() {
 				<Drawer.Screen
 					name="index"
 					options={{
-						title: translate(TranslationKeys.please_select_your_canteen),
-						headerLeft: () => null,
-					}}
-				/>
-				<Drawer.Screen
-					name={AppScreens.FOOD_OFFERS}
-					options={{
-						title: 'Canteens',
+						title: translate(TranslationKeys.home),
 						headerShown: false,
 					}}
 				/>
 				<Drawer.Screen
-					name="forms/index"
+					name="setup"
 					options={{
-						header: () => <CustomStackHeader label={translate(TranslationKeys.select_a_form)} />,
-					}}
-				/>
-				<Drawer.Screen
-					name="form-submissions/index"
-					options={{
+						title: translate(TranslationKeys.settings),
 						headerShown: false,
 					}}
 				/>
 				<Drawer.Screen
-					name="form-submission/index"
+					name={AppScreens.MATCH}
 					options={{
-						headerShown: false,
-					}}
-				/>
-				<Drawer.Screen
-					name="image-full-screen"
-					options={{
+						title: 'Match',
 						headerShown: false,
 					}}
 				/>

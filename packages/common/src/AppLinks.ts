@@ -1,6 +1,6 @@
 export enum AppScreens {
   LOGIN = 'login',
-  FOOD_OFFERS = 'foodoffers',
+  MATCH = 'match',
   EATING_HABITS = 'eating-habits',
   ACCOUNT_BALANCE = 'account-balance',
   CAMPUS = 'campus',
@@ -52,7 +52,7 @@ export class AppLinks {
   }
 
   static foodOffers(params: AppLinkParam[] = []): string {
-    return this.build(AppScreens.FOOD_OFFERS, params);
+    return this.build(AppScreens.MATCH, params);
   }
 
   static campus(params: AppLinkParam[] = []): string {

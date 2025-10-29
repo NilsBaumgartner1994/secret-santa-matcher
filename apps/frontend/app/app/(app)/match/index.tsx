@@ -1,10 +1,10 @@
-import {Dimensions, Platform, RefreshControl, SafeAreaView, ScrollView, TouchableOpacity, View} from 'react-native';
+import {Dimensions, Platform, RefreshControl, SafeAreaView, ScrollView, TouchableOpacity, View, Text} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import styles from './styles';
 import {useTheme} from '@/hooks/useTheme';
 import {DrawerContentComponentProps, DrawerNavigationProp} from '@react-navigation/drawer';
 import {isWeb} from '@/constants/Constants';
-import {useNavigation} from 'expo-router';
+import {useLocalSearchParams, useNavigation} from 'expo-router';
 import {useDispatch, useSelector} from 'react-redux';
 import {Ionicons} from '@expo/vector-icons';
 import {RootDrawerParamList} from './types';
@@ -22,22 +22,9 @@ const Index: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
 	const drawerNavigation = useNavigation<DrawerNavigationProp<RootDrawerParamList>>();
 	const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
 	const { sortBy, language: languageCode, drawerPosition, appSettings, primaryColor, selectedTheme: mode } = useSelector((state: RootState) => state.settings);
-	const foods_area_color = primaryColor;
 	const [refreshing, setRefreshing] = useState(false);
 
-
-	const requestPermissions = async () => {
-		const { status } = await Notifications.getPermissionsAsync();
-		if (status !== 'granted') {
-			await Notifications.requestPermissionsAsync();
-		}
-	};
-
-	useEffect(() => {
-		if (Platform.OS !== 'web') {
-			requestPermissions();
-		}
-	}, []);
+	const { id, foodId } = useLocalSearchParams();
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -102,6 +89,13 @@ const Index: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
 										</TooltipText>
 									</TooltipContent>
 								</Tooltip>
+
+
+								{/* Canteen Heading */}
+								<View>
+									<Text style={{ ...styles.heading, color: theme.header.text }}>{'Dein Match'}</Text>
+								</View>
+
 							</View>
 							<View
 								style={{

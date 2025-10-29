@@ -23,8 +23,8 @@ const CustomStackHeader: React.FC<CustomStackHeaderProps> = ({ label }) => {
 	const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
 
 	const handleGoback = () => {
-		if (pathname.includes(`/${AppScreens.FOOD_OFFERS}/details`)) {
-			router.navigate(`/${AppScreens.FOOD_OFFERS}`);
+		if (pathname.includes(`/${AppScreens.MATCH}/details`)) {
+			router.navigate(`/${AppScreens.MATCH}`);
 		} else if (pathname.includes(`/${AppScreens.HOUSING}/details`)) {
 			router.navigate(`/${AppScreens.HOUSING}`);
 		} else if (pathname.includes(`/${AppScreens.STATISTICS}`)) {
@@ -54,7 +54,7 @@ const CustomStackHeader: React.FC<CustomStackHeaderProps> = ({ label }) => {
 		} else if (router.canGoBack()) {
 			router.back();
 		} else if (loggedIn) {
-			router.navigate(`/${AppScreens.FOOD_OFFERS}`);
+			router.navigate(`/${AppScreens.MATCH}`);
 		} else {
 			router.navigate(`/${AppScreens.LOGIN}`);
 		}

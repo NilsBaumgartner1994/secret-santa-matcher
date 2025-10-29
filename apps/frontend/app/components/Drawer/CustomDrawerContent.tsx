@@ -174,72 +174,14 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = ({ navigation
 	const generateMenuItems = (): MenuItemProps[] => {
 		let menuItems: MenuItemProps[] = [];
 
-		// Static menu items with positions
-		if (appSettings?.foods_enabled) {
-			menuItems.push({
-				label: translate(TranslationKeys.canteens),
-				iconName: 'restaurant-sharp',
-				iconLibName: Ionicons,
-				activeKey: 'foodoffers',
-				route: 'foodoffers',
-				position: 2,
-			});
-		}
-
-		if (appSettings?.balance_enabled) {
-			menuItems.push({
-				label: translate(TranslationKeys.accountbalance),
-				iconName: 'credit-card',
-				iconLibName: Octicons,
-				activeKey: 'account-balance/index',
-				route: 'account-balance/index',
-				position: 3,
-			});
-		}
-
-		if (appSettings?.campus_enabled) {
-			menuItems.push({
-				label: translate(TranslationKeys.campus),
-				iconName: 'mortar-board',
-				iconLibName: Octicons,
-				activeKey: 'campus',
-				route: 'campus',
-				position: 4,
-			});
-		}
-
-		if (appSettings?.housing_enabled) {
-			menuItems.push({
-				label: translate(TranslationKeys.housing),
-				iconName: 'home',
-				iconLibName: Octicons,
-				activeKey: 'housing',
-				route: 'housing',
-				position: 5,
-			});
-		}
-
-		if (appSettings?.news_enabled) {
-			menuItems.push({
-				label: translate(TranslationKeys.news),
-				iconName: 'newspaper',
-				iconLibName: FontAwesome6,
-				activeKey: 'news/index',
-				route: 'news/index',
-				position: 6,
-			});
-		}
-
-		if (appSettings?.course_timetable_enabled) {
-			menuItems.push({
-				label: translate(TranslationKeys.course_timetable),
-				iconName: 'calendar-clock-outline',
-				iconLibName: MaterialCommunityIcons,
-				activeKey: 'course-timetable/index',
-				route: 'course-timetable/index',
-				position: 7,
-			});
-		}
+		menuItems.push({
+			label: translate(TranslationKeys.home),
+			iconName: 'home',
+			iconLibName: Ionicons,
+			activeKey: 'home',
+			route: 'index',
+			position: 1,
+		});
 
 		// Sort menu items by position (smallest first)
 		menuItems.sort((a, b) => a.position - b.position);
@@ -269,20 +211,6 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = ({ navigation
 								<Text style={getMenuLabelStyle(item.activeKey)}>{item.label}</Text>
 							</TouchableOpacity>
 						))}
-						<View style={styles.divider} />
-						<TouchableOpacity style={getMenuItemStyle('settings/index')} onPress={() => navigation.navigate('settings/index')}>
-							<Ionicons name="settings-outline" size={28} color={isActive('settings/index') ? getContrastColor('settings/index') : theme.inactiveIcon} />
-							<Text style={getMenuLabelStyle('settings/index')}>{translate(TranslationKeys.settings)}</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={getMenuItemStyle('faq-living/index')}
-							onPress={() => {
-								performLogout(dispatch, router, true);
-							}}
-						>
-							<MaterialCommunityIcons name="logout" size={28} color={theme.inactiveIcon} />
-							<Text style={getMenuLabelStyle('faq-living/index')}>{translate(TranslationKeys.logout)}</Text>
-						</TouchableOpacity>
 					</View>
 				</View>
 			</ScrollView>
