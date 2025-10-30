@@ -74,6 +74,7 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                 pairsSnapshot: PairRow[];
                 shareLinks: PresentShare[];
         } | null>(null);
+        const [revealedRecipients, setRevealedRecipients] = useState<Record<string, boolean>>({});
 
 	const requestPermissions = async () => {
 		const { status } = await Notifications.getPermissionsAsync();
@@ -259,12 +260,21 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                         pairsSnapshot,
                         shareLinks,
                 });
+                setRevealedRecipients({});
                 Alert.alert('Erfolg', 'Wichtel Partner wurden ausgelost.');
         };
 
         const resetDrawing = () => {
                 setResultState(null);
+                setRevealedRecipients({});
         };
+
+        const toggleRecipientVisibility = useCallback((personId: string) => {
+                setRevealedRecipients(prev => ({
+                        ...prev,
+                        [personId]: !prev[personId],
+                }));
+        }, []);
 
         const onCopyLink = async (link: string) => {
                 try {
@@ -431,7 +441,7 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                                                                 }}
                                                                                         />
                                                                                 </View>
-                                                                                <View style={{ height: 1, backgroundColor: theme.screen.text + '12' }} />
+                                                                                <View style={{ height: 2, backgroundColor: theme.screen.text + '20' }} />
                                                                         </View>
                                                                 ))}
 
@@ -479,42 +489,88 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                                         <Text style={{ color: theme.screen.text, fontSize: 18, fontWeight: '700', marginBottom: 12 }}>
                                                                                 Eure Matches
                                                                         </Text>
-                                                                        {resultState.shareLinks.map(entry => (
-                                                                                <View
-                                                                                        key={entry.person.id}
-                                                                                        style={{
-                                                                                                width: '100%',
-                                                                                                borderRadius: 16,
-                                                                                                padding: 20,
-                                                                                                backgroundColor: theme.screen.iconBg,
-                                                                                                gap: 16,
-                                                                                        }}
-                                                                                >
-                                                                                        <View>
-                                                                                                <Text style={{ color: theme.screen.text, fontSize: 16, fontWeight: '600' }}>
-                                                                                                        {entry.person.name}
-                                                                                                </Text>
-                                                                                        </View>
-                                                                                        <TouchableOpacity
-                                                                                                onPress={() => onCopyLink(entry.link)}
+                                                                        {resultState.shareLinks.map((entry, index) => {
+                                                                                const isRecipientVisible = revealedRecipients[entry.person.id];
+                                                                                const isLast = index === resultState.shareLinks.length - 1;
+
+                                                                                return (
+                                                                                        <View
+                                                                                                key={entry.person.id}
                                                                                                 style={{
                                                                                                         width: '100%',
-                                                                                                        flexDirection: 'row',
-                                                                                                        alignItems: 'center',
-                                                                                                        justifyContent: 'space-between',
-                                                                                                        paddingVertical: 14,
-                                                                                                        paddingHorizontal: 18,
-                                                                                                        borderRadius: 12,
-                                                                                                        backgroundColor: theme.screen.background,
+                                                                                                        borderRadius: 16,
+                                                                                                        padding: 20,
+                                                                                                        backgroundColor: theme.screen.iconBg,
+                                                                                                        gap: 16,
+                                                                                                        marginBottom: isLast ? 0 : 16,
                                                                                                 }}
                                                                                         >
-                                                                                                <Text style={{ flex: 1, color: theme.screen.text, fontSize: 14 }} numberOfLines={2}>
-                                                                                                        {entry.link}
-                                                                                                </Text>
-                                                                                                <Ionicons name="copy" size={18} color={theme.screen.text} />
-                                                                                        </TouchableOpacity>
-                                                                                </View>
-                                                                        ))}
+                                                                                                <View>
+                                                                                                        <Text style={{ color: theme.screen.text, fontSize: 16, fontWeight: '600' }}>
+                                                                                                                {entry.person.name}
+                                                                                                        </Text>
+                                                                                                </View>
+                                                                                                <TouchableOpacity
+                                                                                                        onPress={() => onCopyLink(entry.link)}
+                                                                                                        style={{
+                                                                                                                width: '100%',
+                                                                                                                flexDirection: 'row',
+                                                                                                                alignItems: 'center',
+                                                                                                                justifyContent: 'space-between',
+                                                                                                                paddingVertical: 14,
+                                                                                                                paddingHorizontal: 18,
+                                                                                                                borderRadius: 12,
+                                                                                                                backgroundColor: theme.screen.background,
+                                                                                                        }}
+                                                                                                >
+                                                                                                        <Text style={{ flex: 1, color: theme.screen.text, fontSize: 14 }} numberOfLines={2}>
+                                                                                                                {entry.link}
+                                                                                                        </Text>
+                                                                                                        <Ionicons name="copy" size={18} color={theme.screen.text} />
+                                                                                                </TouchableOpacity>
+                                                                                                <TouchableOpacity
+                                                                                                        onPress={() => toggleRecipientVisibility(entry.person.id)}
+                                                                                                        style={{
+                                                                                                                flexDirection: 'row',
+                                                                                                                alignItems: 'center',
+                                                                                                                justifyContent: 'center',
+                                                                                                                gap: 8,
+                                                                                                                paddingVertical: 14,
+                                                                                                                paddingHorizontal: 18,
+                                                                                                                borderRadius: 12,
+                                                                                                                borderWidth: 1,
+                                                                                                                borderColor: theme.screen.text + '33',
+                                                                                                        }}
+                                                                                                >
+                                                                                                        <Ionicons
+                                                                                                                name={isRecipientVisible ? 'eye-off' : 'eye'}
+                                                                                                                size={18}
+                                                                                                                color={theme.screen.text}
+                                                                                                        />
+                                                                                                        <Text style={{ color: theme.screen.text, fontSize: 14, fontWeight: '600' }}>
+                                                                                                                {isRecipientVisible ? 'Zu beschenkende Person ausblenden' : 'Zu beschenkende Person anzeigen'}
+                                                                                                        </Text>
+                                                                                                </TouchableOpacity>
+                                                                                                {isRecipientVisible && (
+                                                                                                        <View
+                                                                                                                style={{
+                                                                                                                        width: '100%',
+                                                                                                                        borderRadius: 12,
+                                                                                                                        backgroundColor: theme.screen.background,
+                                                                                                                        paddingVertical: 14,
+                                                                                                                        paddingHorizontal: 18,
+                                                                                                                        borderWidth: 1,
+                                                                                                                        borderColor: theme.screen.text + '20',
+                                                                                                                }}
+                                                                                                        >
+                                                                                                                <Text style={{ color: theme.screen.text, fontSize: 14, fontWeight: '600' }}>
+                                                                                                                        {entry.recipientName || 'Keine zu beschenkende Person gefunden'}
+                                                                                                                </Text>
+                                                                                                        </View>
+                                                                                                )}
+                                                                                        </View>
+                                                                                );
+                                                                        })}
                                                                 </View>
 
                                                                 <TouchableOpacity
