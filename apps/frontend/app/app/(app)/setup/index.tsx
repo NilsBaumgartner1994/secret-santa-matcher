@@ -163,9 +163,22 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
 		const ids = persons.map(p => p.id);
 		const tries = 500;
 
+		const randomFloat = (() => {
+			const globalObj: { crypto?: { getRandomValues?: (array: Uint32Array) => void } } | undefined =
+				typeof globalThis !== 'undefined' ? (globalThis as any) : undefined;
+			const cryptoObj = globalObj?.crypto;
+			if (cryptoObj && typeof cryptoObj.getRandomValues === 'function') {
+				return () => {
+					const buffer = new Uint32Array(1);
+					cryptoObj.getRandomValues(buffer);
+					return buffer[0] / 0x100000000;
+				};
+			}
+			return Math.random;
+		})();
 		const shuffle = <T,>(arr: T[]) => {
 			for (let i = arr.length - 1; i > 0; i--) {
-				const j = Math.floor(Math.random() * (i + 1));
+				const j = Math.floor(randomFloat() * (i + 1));
 				[ arr[i], arr[j] ] = [ arr[j], arr[i] ];
 			}
 			return arr;
