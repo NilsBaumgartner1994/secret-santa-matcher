@@ -26,6 +26,7 @@ const Index: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
         const params = useLocalSearchParams<{ name?: string | string[]; presentFor?: string | string[] }>();
         const [recipientName, setRecipientName] = useState<string | null>(null);
         const [error, setError] = useState<string | null>(null);
+        const [isRecipientVisible, setRecipientVisible] = useState(false);
 
         useEffect(() => {
                 if (typeof window !== 'undefined') {
@@ -42,6 +43,7 @@ const Index: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
                 if (!presentParamRaw) {
                         setError('Kein Geschenkpartner gefunden.');
                         setRecipientName(null);
+                        setRecipientVisible(false);
                         return;
                 }
 
@@ -51,13 +53,16 @@ const Index: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
                         if (payload?.recipient) {
                                 setRecipientName(payload.recipient);
                                 setError(null);
+                                setRecipientVisible(false);
                         } else {
                                 setRecipientName(null);
                                 setError('Link konnte nicht gelesen werden.');
+                                setRecipientVisible(false);
                         }
                 } catch (_e) {
                         setRecipientName(null);
                         setError('Link konnte nicht gelesen werden.');
+                        setRecipientVisible(false);
                 }
         }, [params.presentFor]);
 
@@ -167,8 +172,44 @@ const Index: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
                                                         {recipientName && (
                                                                 <>
                                                                         <Text style={{ color: theme.screen.text, fontSize: 16 }}>
-                                                                                Du darfst dieses Jahr {recipientName} beschenken.
+                                                                                Du darfst dieses Jahr beschenken:
                                                                         </Text>
+                                                                        <TouchableOpacity
+                                                                                onPress={() => setRecipientVisible(prev => !prev)}
+                                                                                style={{
+                                                                                        flexDirection: 'row',
+                                                                                        alignItems: 'center',
+                                                                                        justifyContent: 'center',
+                                                                                        gap: 8,
+                                                                                        alignSelf: 'center',
+                                                                                        paddingVertical: 14,
+                                                                                        paddingHorizontal: 22,
+                                                                                        borderRadius: 999,
+                                                                                        backgroundColor: theme.screen.iconBg,
+                                                                                }}
+                                                                        >
+                                                                                <Ionicons
+                                                                                        name={isRecipientVisible ? 'eye-outline' : 'eye-off-outline'}
+                                                                                        size={20}
+                                                                                        color={theme.screen.text}
+                                                                                />
+                                                                                <Text style={{ color: theme.screen.text, fontSize: 16, fontWeight: '600' }}>
+                                                                                        {isRecipientVisible ? 'Namen ausblenden' : 'Namen anzeigen'}
+                                                                                </Text>
+                                                                        </TouchableOpacity>
+                                                                        {isRecipientVisible && (
+                                                                                <Text
+                                                                                        style={{
+                                                                                                color: theme.screen.text,
+                                                                                                fontSize: 22,
+                                                                                                fontWeight: '700',
+                                                                                                textAlign: 'center',
+                                                                                                marginTop: 12,
+                                                                                        }}
+                                                                                >
+                                                                                        {recipientName}
+                                                                                </Text>
+                                                                        )}
                                                                         <Text style={{ color: theme.screen.text + 'CC', fontSize: 14 }}>
                                                                                 Bewahre diesen Link gut auf und verrate ihn niemandem – so bleibt die Überraschung erhalten!
                                                                         </Text>

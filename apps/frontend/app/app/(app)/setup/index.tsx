@@ -28,6 +28,7 @@ import * as Linking from 'expo-linking';
 import * as Clipboard from 'expo-clipboard';
 import { myContrastColor } from '@/helper/ColorHelper';
 import { Buffer } from 'buffer';
+import { EnvHelper } from '@/constants/EnvHelper';
 
 
 const Index: React.FC<DrawerContentComponentProps> = (_props) => {
@@ -211,12 +212,18 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
         };
 
         const buildShareLinks = useCallback((assignments: Record<string, string>, persons: Person[]): PresentShare[] => {
+                const rawBase = EnvHelper.getBaseUrl?.() ?? '';
+                const sanitizedBase = rawBase.replace(/\/+$/, '').replace(/^\/+/, '');
+                const basePrefix = sanitizedBase ? `/${sanitizedBase}` : '';
+                const matchPath = `${basePrefix}/match`;
+                const linkPath = matchPath.startsWith('/') ? matchPath : `/${matchPath}`;
+
                 return persons.map(person => {
                         const recipientId = assignments[person.id];
                         const recipientName = getRecipientNameFromPairs(recipientId);
                         const payload = JSON.stringify({ giverId: person.id, recipient: recipientName });
                         const code = encodeURIComponent(Buffer.from(payload, 'utf8').toString('base64'));
-                        const link = `${Linking.createURL('/match')}?name=${encodeURIComponent(person.name)}&presentFor=${code}`;
+                        const link = `${Linking.createURL(linkPath)}?name=${encodeURIComponent(person.name)}&presentFor=${code}`;
 
                         return {
                                 person,
@@ -360,6 +367,8 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                                                                 onChangeText={(t) => updateName(idx, 'a', t)}
                                                                                                 style={{
                                                                                                         flex: 1,
+                                                                                                        minWidth: 0,
+                                                                                                        width: '100%',
                                                                                                         paddingVertical: 16,
                                                                                                         paddingHorizontal: 18,
                                                                                                         backgroundColor: theme.screen.iconBg,
@@ -376,6 +385,8 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                                                                 onChangeText={(t) => updateName(idx, 'b', t)}
                                                                                                 style={{
                                                                                                         flex: 1,
+                                                                                                        minWidth: 0,
+                                                                                                        width: '100%',
                                                                                                         paddingVertical: 16,
                                                                                                         paddingHorizontal: 18,
                                                                                                         backgroundColor: theme.screen.iconBg,
