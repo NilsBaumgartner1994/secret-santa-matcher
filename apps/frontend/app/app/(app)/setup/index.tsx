@@ -275,13 +275,41 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                 }
         };
 
+        const onCopyText = async (text: string) => {
+                try {
+                        await Clipboard.setStringAsync(text);
+                        Alert.alert('Kopiert', 'Text wurde in die Zwischenablage kopiert.');
+                } catch (e) {
+                        Alert.alert('Fehler', 'Text konnte nicht kopiert werden.');
+                }
+        };
+
         const buttonBackground = useMemo(() => foods_area_color || theme.header.text, [foods_area_color, theme.header.text]);
 
         const buttonTextColor = useMemo(() => myContrastColor(buttonBackground, theme, mode === 'dark'), [buttonBackground, mode, theme]);
 
-	return (
-		<>
-			<SafeAreaView style={{ flex: 1, backgroundColor: theme.screen.iconBg }}>
+        const whatsappMessage = useMemo(() => {
+                if (!resultState?.shareLinks?.length) {
+                        return '';
+                }
+
+                const lines = [
+                        '🎄 Secret-Santa-Auslosung 🎄',
+                        'Hier findest du deinen Link zu deiner zu beschenkenden Person:',
+                        '',
+                        ...resultState.shareLinks.map(entry =>
+                                `${entry.person.name} ➜ ${entry.link}`,
+                        ),
+                        '',
+                        'Viel Spaß beim Wichteln! 🎁',
+                ];
+
+                return lines.join('\n');
+        }, [resultState?.shareLinks]);
+
+        return (
+                <>
+                        <SafeAreaView style={{ flex: 1, backgroundColor: theme.screen.iconBg }}>
 				<View style={{ flex: 1 }}>
 					<View
 						style={{
@@ -352,6 +380,7 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                 contentContainerStyle={{
                                                         ...styles.contentContainer,
                                                         paddingHorizontal: isWeb ? (screenWidth < 500 ? 12 : 32) : 12,
+                                                        paddingTop: 24,
                                                         paddingBottom: 48,
                                                 }}
                                                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -409,8 +438,8 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                                                 alignItems: 'center',
                                                                                 gap: 8,
                                                                                 alignSelf: 'flex-start',
-                                                                                paddingVertical: 10,
-                                                                                paddingHorizontal: 14,
+                                                                                paddingVertical: 12,
+                                                                                paddingHorizontal: 18,
                                                                                 borderRadius: 999,
                                                                                 backgroundColor: theme.screen.iconBg,
                                                                         }}
@@ -419,11 +448,12 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                                         <Text style={{ color: theme.screen.text, fontWeight: '600' }}>Weitere Personen hinzufügen</Text>
                                                                 </TouchableOpacity>
 
-                                                                <View style={{ marginTop: 28 }}>
+                                                                <View style={{ marginTop: 28, width: '100%' }}>
                                                                         <TouchableOpacity
                                                                                 onPress={onDraw}
                                                                                 style={{
-                                                                                        paddingVertical: 16,
+                                                                                        paddingVertical: 18,
+                                                                                        paddingHorizontal: 24,
                                                                                         borderRadius: 16,
                                                                                         backgroundColor: buttonBackground,
                                                                                         alignItems: 'center',
@@ -440,7 +470,7 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                 )}
 
                                                 {resultState && (
-                                                        <View style={{ gap: 18 }}>
+                                                        <View style={{ gap: 18, width: '100%' }}>
                                                                 <View>
                                                                         <Text style={{ color: theme.screen.text, fontSize: 18, fontWeight: '700', marginBottom: 12 }}>
                                                                                 Eure Matches
@@ -449,8 +479,9 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                                                 <View
                                                                                         key={entry.person.id}
                                                                                         style={{
+                                                                                                width: '100%',
                                                                                                 borderRadius: 16,
-                                                                                                padding: 18,
+                                                                                                padding: 20,
                                                                                                 backgroundColor: theme.screen.iconBg,
                                                                                                 gap: 12,
                                                                                         }}
@@ -466,11 +497,12 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                                                         <TouchableOpacity
                                                                                                 onPress={() => onCopyLink(entry.link)}
                                                                                                 style={{
+                                                                                                        width: '100%',
                                                                                                         flexDirection: 'row',
                                                                                                         alignItems: 'center',
                                                                                                         justifyContent: 'space-between',
-                                                                                                        paddingVertical: 12,
-                                                                                                        paddingHorizontal: 16,
+                                                                                                        paddingVertical: 14,
+                                                                                                        paddingHorizontal: 18,
                                                                                                         borderRadius: 12,
                                                                                                         backgroundColor: theme.screen.background,
                                                                                                 }}
@@ -488,8 +520,8 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                                         onPress={resetDrawing}
                                                                         style={{
                                                                                 alignSelf: 'flex-start',
-                                                                                paddingVertical: 10,
-                                                                                paddingHorizontal: 16,
+                                                                                paddingVertical: 12,
+                                                                                paddingHorizontal: 18,
                                                                                 borderRadius: 12,
                                                                                 borderWidth: 1,
                                                                                 borderColor: theme.screen.text + '33',
@@ -498,16 +530,57 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                                         <Text style={{ color: theme.screen.text, fontWeight: '600' }}>Neue Runde starten</Text>
                                                                 </TouchableOpacity>
 
-                                                                <View style={{ marginTop: 16, gap: 8 }}>
-                                                                        <Text style={{ color: theme.screen.text + 'CC', fontSize: 14 }}>
-                                                                                Bei dem Wichteln dieses Jahr kann hier eingesehen werden, wen man beschenken soll:
-                                                                        </Text>
-                                                                        {resultState.shareLinks.map(entry => (
-                                                                                <Text key={`share-${entry.person.id}`} style={{ color: theme.screen.text, fontSize: 14 }}>
-                                                                                        - {entry.person.name}, deine zu beschenkende Person: {entry.link}
+                                                                {!!whatsappMessage && (
+                                                                        <View
+                                                                                style={{
+                                                                                        marginTop: 16,
+                                                                                        gap: 12,
+                                                                                        width: '100%',
+                                                                                        padding: 20,
+                                                                                        borderRadius: 16,
+                                                                                        backgroundColor: theme.screen.iconBg,
+                                                                                }}
+                                                                        >
+                                                                                <Text style={{ color: theme.screen.text, fontSize: 16, fontWeight: '600' }}>
+                                                                                        WhatsApp Nachricht
                                                                                 </Text>
-                                                                        ))}
-                                                                </View>
+                                                                                <View
+                                                                                        style={{
+                                                                                                width: '100%',
+                                                                                                borderRadius: 12,
+                                                                                                backgroundColor: theme.screen.background,
+                                                                                                paddingVertical: 16,
+                                                                                                paddingHorizontal: 18,
+                                                                                                gap: 4,
+                                                                                        }}
+                                                                                >
+                                                                                        {whatsappMessage.split('\n').map((line, index) => (
+                                                                                                <Text
+                                                                                                        key={`wa-line-${index}`}
+                                                                                                        style={{ color: theme.screen.text, fontSize: 14 }}
+                                                                                                >
+                                                                                                        {line.trim().length ? line : ' '}
+                                                                                                </Text>
+                                                                                        ))}
+                                                                                </View>
+                                                                                <TouchableOpacity
+                                                                                        onPress={() => onCopyText(whatsappMessage)}
+                                                                                        style={{
+                                                                                                flexDirection: 'row',
+                                                                                                alignItems: 'center',
+                                                                                                justifyContent: 'center',
+                                                                                                gap: 8,
+                                                                                                paddingVertical: 14,
+                                                                                                paddingHorizontal: 18,
+                                                                                                borderRadius: 12,
+                                                                                                backgroundColor: buttonBackground,
+                                                                                        }}
+                                                                                >
+                                                                                        <Ionicons name="copy" size={18} color={buttonTextColor} />
+                                                                                        <Text style={{ color: buttonTextColor, fontSize: 14, fontWeight: '600' }}>Text kopieren</Text>
+                                                                                </TouchableOpacity>
+                                                                        </View>
+                                                                )}
                                                         </View>
                                                 )}
 
