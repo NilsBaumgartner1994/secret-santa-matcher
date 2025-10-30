@@ -293,13 +293,17 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                         return '';
                 }
 
+                const personLines = resultState.shareLinks.flatMap((entry, index) => {
+                        const line = `${entry.person.name} ➜ ${entry.link}`;
+                        // add an empty line between each person for better readability in the formatted text
+                        return index === resultState.shareLinks.length - 1 ? [line] : [line, ''];
+                });
+
                 const lines = [
                         '🎄 Secret-Santa-Auslosung 🎄',
                         'Hier findest du deinen Link zu deiner zu beschenkenden Person:',
                         '',
-                        ...resultState.shareLinks.map(entry =>
-                                `${entry.person.name} ➜ ${entry.link}`,
-                        ),
+                        ...personLines,
                         '',
                         'Viel Spaß beim Wichteln! 🎁',
                 ];
@@ -470,7 +474,7 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                 )}
 
                                                 {resultState && (
-                                                        <View style={{ gap: 18, width: '100%' }}>
+                                                        <View style={{ gap: 24, width: '100%' }}>
                                                                 <View>
                                                                         <Text style={{ color: theme.screen.text, fontSize: 18, fontWeight: '700', marginBottom: 12 }}>
                                                                                 Eure Matches
@@ -483,15 +487,12 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                                                                 borderRadius: 16,
                                                                                                 padding: 20,
                                                                                                 backgroundColor: theme.screen.iconBg,
-                                                                                                gap: 12,
+                                                                                                gap: 16,
                                                                                         }}
                                                                                 >
                                                                                         <View>
                                                                                                 <Text style={{ color: theme.screen.text, fontSize: 16, fontWeight: '600' }}>
                                                                                                         {entry.person.name}
-                                                                                                </Text>
-                                                                                                <Text style={{ color: theme.screen.text + 'CC', marginTop: 4 }}>
-                                                                                                        beschenkt {entry.recipientName}
                                                                                                 </Text>
                                                                                         </View>
                                                                                         <TouchableOpacity
@@ -559,7 +560,7 @@ const Index: React.FC<DrawerContentComponentProps> = (_props) => {
                                                                                                         key={`wa-line-${index}`}
                                                                                                         style={{ color: theme.screen.text, fontSize: 14 }}
                                                                                                 >
-                                                                                                        {line.trim().length ? line : ' '}
+                                                                                                        {line.trim().length ? line : '\u00a0'}
                                                                                                 </Text>
                                                                                         ))}
                                                                                 </View>
